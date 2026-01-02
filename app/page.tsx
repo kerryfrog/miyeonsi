@@ -6,6 +6,7 @@ import { useState, useRef, ChangeEvent } from 'react';
 import Step1Theme from './components/steps/Step1Theme';
 import Step2Background from './components/steps/Step2Background';
 import Step3Canvas from './components/steps/Step3Canvas';
+import Step5RemoveBg from './components/steps/Step5RemoveBg';
 import GuideFooter from './components/GuideFooter';
 import { BACKGROUND_PRESETS } from './lib/constants';
 import { handleUpload, saveImage } from './lib/utils'; // Import from utils
@@ -59,7 +60,30 @@ export default function MobilePrototype() {
             />
           )}
 
-          {step >= 3 && (
+          {(step === 3 || step === 4) && (
+            <Step3Canvas
+              captureRef={captureRef}
+              theme={theme}
+              bgImage={bgImage}
+              targetImage={targetImage}
+              setTargetImage={setTargetImage}
+              speakerImage={speakerImage}
+              step={step}
+              text={text}
+              setText={setText}
+              // ✅ Ref 전달 추가
+              targetInputRef={targetInputRef}
+              speakerInputRef={speakerInputRef}
+            />
+          )}
+          
+          {step === 5 && (
+            <Step5RemoveBg
+              targetImage={targetImage}
+            />
+          )}
+
+          {step >= 6 && (
             <Step3Canvas
               captureRef={captureRef}
               theme={theme}
@@ -84,6 +108,7 @@ export default function MobilePrototype() {
           bgImage={bgImage}
           speakerImage={speakerImage}
           targetImage={targetImage}
+          setTargetImage={setTargetImage} // Added
           text={text}
           onSave={handleSaveImage} // Changed from saveImage to onSave
         />
