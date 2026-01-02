@@ -1,4 +1,5 @@
 import html2canvas from 'html2canvas';
+import { removeBackground } from '@imgly/background-removal';
 
 export const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -7,6 +8,29 @@ export const toBase64 = (file: File): Promise<string> =>
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   });
+
+// ✅ 주인공 배경 제거(누끼) 함수 추가
+export const processRemoveBackground = async (imageSrc: string): Promise<string> => {
+  try {
+    // 라이브러리 실행 (설정에 따라 public 경로 조정 가능)
+    const blob = await removeBackground(imageSrc, {
+      progress: (key, current, total) => {
+        console.log(`Downloading ${key}: ${Math.round((current / total) * 100)}%`);
+      },
+    });
+    
+    // Blob 결과를 다시 Base64 문장열로 변환
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error('배경 제거 중 오류 발생:', error);
+    throw error;
+  }
+};
 
 export const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) => {
   const file = e.target.files?.[0];

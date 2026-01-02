@@ -1,12 +1,14 @@
 'use client';
 
-import { RefObject } from 'react';
+import { RefObject, useState } from 'react'; // ✅ useState 추가
+import { processRemoveBackground } from '../../lib/utils'; // ✅ 추가
 
 interface Step3CanvasProps {
   captureRef: RefObject<HTMLDivElement>;
   theme: 'black' | 'pink';
   bgImage: string | null;
   targetImage: string | null;
+  setTargetImage: (url: string | null) => void; // ✅ 이미지 변경을 위해 추가 필요
   speakerImage: string | null;
   step: number;
   text: string;
@@ -20,6 +22,7 @@ export default function Step3Canvas({
   theme,
   bgImage,
   targetImage,
+  setTargetImage,
   speakerImage,
   step,
   text,
@@ -27,6 +30,24 @@ export default function Step3Canvas({
   targetInputRef,
   speakerInputRef,
 }: Step3CanvasProps) {
+  const [isProcessing, setIsProcessing] = useState(false); // ✅ 로딩 상태 관리
+
+  const handleRemoveBg = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // 부모 클릭(업로드창 열기) 방지
+    if (!targetImage || isProcessing) return;
+
+    setIsProcessing(true);
+    try {
+      const result = await processRemoveBackground(targetImage);
+      setTargetImage(result); // ✅ 누끼 따진 이미지로 교체
+    } catch (error) {
+      console.error(error); // ✅ 에러 메시지 변경
+      alert("배경 제거에 실패했습니다.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   return (
     // ✅ justify-center를 추가하여 4:3 캔버스가 수직 중앙에 오도록 설정
     <div className="flex-1 flex flex-col items-center justify-center bg-black">
@@ -55,17 +76,29 @@ export default function Step3Canvas({
           </div>
         )}
 
-        {/* Target image selection UI for step 4 */}
+        {/* Step 4: 주인공 선택 UI */}
         {step === 4 && (
           <div 
-            onClick={() => targetInputRef.current?.click()}
-            // Using the original position for target image
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-24 h-32 bg-white/20 border-2 border-dashed border-white/50 flex items-center justify-center cursor-pointer shadow-lg animate-pulse"
+            onClick={() => !isProcessing && targetInputRef.current?.click()}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-40 h-56 bg-white/10 border-2 border-dashed border-white/50 flex flex-col items-center justify-center cursor-pointer shadow-lg transition-all hover:bg-white/20"
           >
             {targetImage ? (
-              <img src={targetImage} className="w-full h-full object-contain" />
+              <div className="relative w-full h-full group">
+                <img src={targetImage} className="w-full h-full object-contain" />
+                {/* ✅ 누끼 따기 버튼 (업로드된 이미지가 있을 때만 노출) */}
+                <button
+                  onClick={handleRemoveBg}
+                  disabled={isProcessing}
+                  className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-32 py-2 bg-yellow-400 text-black text-xs font-black rounded-full shadow-xl hover:bg-yellow-300 active:scale-95 disabled:opacity-50"
+                >
+                  {isProcessing ? "처리 중..." : "AI 배경 제거"}
+                </button>
+              </div>
             ) : (
-              <span className="text-white text-4xl font-thin">+</span>
+              <>
+                <span className="text-white text-4xl font-thin">+</span>
+                <span className="text-white/50 text-[10px] mt-2">주인공 사진 업로드</span>
+              </>
             )}
           </div>
         )}
