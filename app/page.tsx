@@ -3,16 +3,15 @@
 import { useState, useRef, ChangeEvent } from 'react';
 import html2canvas from 'html2canvas';
 
-// 배경 프리셋 데이터 정의
-const BACKGROUND_PRESETS = [
-  { id: 'school', label: '학교', url: '/placeholder.png' },
-  { id: 'park', label: '공원', url: '/placeholder.png' },
-  { id: 'playground', label: '운동장', url: '/placeholder.png' },
-  { id: 'home', label: '집', url: '/placeholder.png' },
-  { id: 'apartment', label: '아파트', url: '/placeholder.png' },
-];
+// Component Imports
+import Step1Theme from './components/steps/Step1Theme';
+import Step2Background from './components/steps/Step2Background';
+import Step3Canvas from './components/steps/Step3Canvas';
+import GuideFooter from './components/GuideFooter';
+import { BACKGROUND_PRESETS } from './lib/constants';
 
 export default function MobilePrototype() {
+  // State
   const [step, setStep] = useState(1);
   const [theme, setTheme] = useState<'black' | 'pink'>('black');
   const [bgImage, setBgImage] = useState<string | null>(null);
@@ -22,11 +21,13 @@ export default function MobilePrototype() {
   const [text, setText] = useState('');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+  // Refs
   const captureRef = useRef<HTMLDivElement>(null);
   const bgInputRef = useRef<HTMLInputElement>(null);
   const targetInputRef = useRef<HTMLInputElement>(null);
   const speakerInputRef = useRef<HTMLInputElement>(null);
 
+  // Helper Functions
   const toBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -69,26 +70,10 @@ export default function MobilePrototype() {
     }
   };
 
-  const NavButtons = ({ nextDisabled = false, onNext }: { nextDisabled?: boolean, onNext: () => void }) => (
-    <div className="flex justify-between mt-4 text-sm font-bold">
-      {step > 1 && <button onClick={() => setStep(step - 1)} className="text-zinc-500 hover:text-white transition-colors">&lt; 이전</button>}
-      <button 
-        onClick={onNext} 
-        disabled={nextDisabled} 
-        className={`ml-auto font-black italic tracking-tighter transition-all ${
-          step === 6 ? 'text-pink-500 hover:scale-110' : 'text-blue-500 hover:scale-110'
-        } disabled:opacity-20`}
-      >
-        {step === 6 ? '저장하기' : '다음 단계 >'}
-      </button>
-    </div>
-  );
-
   return (
     <main className="min-h-screen flex justify-center bg-black font-chatwindow text-white">
       <div className="w-full max-w-md min-h-screen bg-black shadow-2xl border-x-2 border-red-600 flex flex-col relative overflow-hidden">
         
-        {/* 헤더 영역 */}
         <header className="flex-none flex flex-col items-center justify-center p-6 border-b border-white/10 bg-black z-10">
           <img src="/trash.png" alt="reset" onClick={() => window.location.reload()} className="w-6 h-6 cursor-pointer invert absolute left-4 top-8 opacity-60" />
           <div className="text-center">
@@ -100,141 +85,41 @@ export default function MobilePrototype() {
         </header>
 
         <div className="flex-1 flex flex-col relative overflow-hidden bg-black">
-          {/* ✅ STEP 1: 테마 선택 화면 복구 */}
-          {step === 1 && (
-            <div className="flex-1 flex flex-col h-full p-4 gap-4 animate-fade-in">
-              {/* 블랙 테마 카드 */}
-              <div 
-                onClick={() => setTheme('black')}
-                className={`flex-1 relative cursor-pointer overflow-hidden rounded-2xl transition-all duration-300 border-2 ${
-                  theme === 'black' ? 'border-yellow-400 scale-[0.98] bg-zinc-900 shadow-[0_0_15px_rgba(250,204,21,0.3)]' : 'border-white/5 opacity-30 bg-zinc-950 hover:opacity-100'
-                }`}
-              >
-                <img src="/black_character.png" alt="Black" className="absolute inset-0 w-full h-full object-contain p-6" />
-                {theme === 'black' && <div className="absolute top-3 right-3 bg-yellow-400 text-black text-[10px] px-2 py-0.5 font-black rounded-full shadow-lg">SELECTED</div>}
-              </div>
-
-              {/* 핑크 테마 카드 */}
-              <div 
-                onClick={() => setTheme('pink')}
-                className={`flex-1 relative cursor-pointer overflow-hidden rounded-2xl transition-all duration-300 border-2 ${
-                  theme === 'pink' ? 'border-pink-500 scale-[0.98] bg-zinc-900 shadow-[0_0_15px_rgba(236,72,153,0.3)]' : 'border-white/5 opacity-30 bg-zinc-950 hover:opacity-100'
-                }`}
-              >
-                <img src="/pink_character.png" alt="Pink" className="absolute inset-0 w-full h-full object-contain p-4" />
-                {theme === 'pink' && <div className="absolute top-3 right-3 bg-pink-500 text-white text-[10px] px-2 py-0.5 font-black rounded-full shadow-lg">SELECTED</div>}
-              </div>
-            </div>
-          )}
-
-          {/* STEP 2: 배경 선택 그리드 */}
+          {step === 1 && <Step1Theme theme={theme} setTheme={setTheme} />}
+          
           {step === 2 && (
-            <div className="flex-1 p-6 grid grid-cols-2 grid-rows-3 gap-x-4 gap-y-6 overflow-y-auto animate-fade-in">
-              {BACKGROUND_PRESETS.map((item) => (
-                <div key={item.id} className="flex flex-col items-center gap-2">
-                  <div 
-                    onClick={() => { setBgImage(item.url); setSelectedPreset(item.id); }}
-                    className={`w-full aspect-[4/3] bg-zinc-800 rounded-lg border-2 transition-all overflow-hidden cursor-pointer ${
-                      selectedPreset === item.id ? 'border-yellow-400 scale-95' : 'border-zinc-700 hover:border-zinc-500'
-                    }`}
-                  >
-                    <img src={item.url} alt={item.label} className="w-full h-full object-cover" />
-                  </div>
-                  <span className="text-[10px] font-bold text-zinc-500">{item.label}</span>
-                </div>
-              ))}
-              <div className="flex flex-col items-center gap-2">
-                <div 
-                  onClick={() => { setSelectedPreset('custom'); bgInputRef.current?.click(); }}
-                  className={`w-full aspect-[4/3] bg-zinc-900 rounded-lg border-2 transition-all flex items-center justify-center cursor-pointer ${
-                    selectedPreset === 'custom' ? 'border-yellow-400 scale-95' : 'border-dashed border-zinc-700'
-                  }`}
-                >
-                  {selectedPreset === 'custom' && bgImage && bgImage !== '/placeholder.png' ? (
-                    <img src={bgImage} className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-xl text-zinc-700">+</span>
-                  )}
-                </div>
-                <span className="text-[10px] font-bold text-zinc-500">내가 선택하기</span>
-              </div>
-            </div>
+            <Step2Background
+              bgImage={bgImage}
+              setBgImage={setBgImage}
+              selectedPreset={selectedPreset}
+              setSelectedPreset={setSelectedPreset}
+              bgInputRef={bgInputRef}
+            />
           )}
 
-          {/* STEP 3 ~ 6: 제작 캔버스 */}
           {step >= 3 && (
-            <div className="flex-1 flex items-center justify-center p-6">
-              <div 
-                ref={captureRef} 
-                className={`relative w-full aspect-[4/3] bg-zinc-900 overflow-hidden shadow-2xl border-4 ${
-                  theme === 'black' ? 'border-zinc-800' : 'border-pink-300'
-                }`}
-              >
-                {bgImage && <img src={bgImage} className="absolute inset-0 w-full h-full object-cover" />}
-                
-                {targetImage && step >= 5 && (
-                  <img src={targetImage} className="absolute top-1/2 left-1/2 w-auto h-[85%] object-contain -translate-x-1/2 -translate-y-1/2 drop-shadow-2xl" />
-                )}
-
-                {(step >= 5) && (
-                  <div className="absolute bottom-0 inset-x-0 h-28 bg-black/80 border-t border-white/10 p-3 flex items-end">
-                    <div className="relative z-10 w-20 h-20 border-2 border-yellow-400 bg-zinc-800 overflow-hidden shrink-0 -rotate-1">
-                      {speakerImage && <img src={speakerImage} className="w-full h-full object-cover" />}
-                    </div>
-                    <div className="flex-1 ml-4 h-full">
-                      {step === 5 ? (
-                        <textarea
-                          value={text}
-                          onChange={(e) => setText(e.target.value)}
-                          className="w-full h-full bg-transparent text-sm text-zinc-100 outline-none resize-none font-chatwindow p-1"
-                          placeholder="대사를 입력하세요..."
-                          autoFocus
-                        />
-                      ) : (
-                        <div className="text-sm text-zinc-100 font-chatwindow p-1 whitespace-pre-wrap">{text}</div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+            <Step3Canvas
+              captureRef={captureRef}
+              theme={theme}
+              bgImage={bgImage}
+              targetImage={targetImage}
+              speakerImage={speakerImage}
+              step={step}
+              text={text}
+              setText={setText}
+            />
           )}
         </div>
 
-        {/* 하단 가이드 푸터 */}
-        <footer className="flex-none h-64 w-full p-4 pb-12 flex items-end relative z-20 bg-black border-t border-white/5">
-          <img src="/character.png" alt="guide" className="absolute left-2 bottom-2 w-28 h-48 object-contain animate-bounce-slow z-30" />
-          
-          <div className="flex-1 ml-24 bg-zinc-900 text-white p-6 rounded-3xl rounded-bl-none border border-white/10 relative min-h-[160px] flex flex-col justify-between shadow-2xl">
-            <div className="font-bold text-[15px] leading-relaxed break-keep">
-              {step === 1 ? (
-                <>
-                  무슨느낌으로 만들래 ???
-                  <br className="mb-2" />
-                  (<span className="text-zinc-400">블랙</span> / <span style={{ color: '#ff69b4' }} className="font-extrabold">핑크</span>)
-                </>
-              ) : (
-                <div className="text-white">
-                  {step === 2 && "좋아! 배경 이미지를 불러와줘."}
-                  {step === 3 && "말하는 사람(화자)의 이미지는 뭐가 좋을까?"}
-                  {step === 4 && "화면 중앙에 나올 주인공 이미지를 넣어줘!"}
-                  {step === 5 && "가장 중요한 대사를 입력해봐."}
-                  {step === 6 && "완벽해! 이제 이미지를 저장해볼까?"}
-                </div>
-              )}
-            </div>
-
-            <NavButtons 
-              onNext={step === 6 ? saveImage : () => setStep(step + 1)} 
-              nextDisabled={
-                (step === 2 && !bgImage) || 
-                (step === 3 && !speakerImage) || 
-                (step === 4 && !targetImage) || 
-                (step === 5 && !text)
-              } 
-            />
-          </div>
-        </footer>
+        <GuideFooter
+          step={step}
+          setStep={setStep}
+          saveImage={saveImage}
+          bgImage={bgImage}
+          speakerImage={speakerImage}
+          targetImage={targetImage}
+          text={text}
+        />
       </div>
 
       <style jsx global>{`
