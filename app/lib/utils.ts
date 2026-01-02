@@ -54,20 +54,33 @@ export const saveImage = async ({ captureRef, theme, setPreviewUrl }: SaveImageP
   if (!captureRef.current) return;
   try {
     // Assuming document.fonts.ready is still needed for fonts to load correctly before capture
-    await document.fonts.ready; 
+    await document.fonts.ready;
     const canvas = await html2canvas(captureRef.current, {
-      scale: 3,
       backgroundColor: theme === 'black' ? '#000' : '#fff',
       useCORS: true,
       allowTaint: true,
       logging: false,
     });
-    const dataUrl = canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.download = `miyeonsi-${Date.now()}.png`;
-    link.href = dataUrl;
-    link.click();
-    setPreviewUrl(dataUrl);
+
+    const overlay = new Image();
+    overlay.src = '/black_mode_1.png';
+    overlay.onload = () => {
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        // 오버레이 이미지 크기 (원본보다 작게)
+        const overlayWidth = overlay.width / 2;
+        const overlayHeight = overlay.height / 2;
+        // 캔버스 우측 상단에 배치 (여백 20px)
+        ctx.drawImage(overlay, canvas.width - overlayWidth - 20, 20, overlayWidth, overlayHeight);
+      }
+
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = `miyeonsi-${Date.now()}.png`;
+      link.href = dataUrl;
+      link.click();
+      setPreviewUrl(dataUrl);
+    };
   } catch (err) {
     console.error('이미지 생성 오류:', err);
   }
