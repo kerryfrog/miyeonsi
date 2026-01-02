@@ -18,7 +18,7 @@ export default function NavButtons({ step, setStep, onNext, nextDisabled = false
           step === 6 ? 'text-pink-500' : 'text-blue-500'
         } disabled:opacity-20`}
       >
-        {step === 6 ? '저장하기' : '다음 단계 >'}
+        {step === 6 ? '저장하기' : '다음 >'}
       </button>
     </div>
   );
