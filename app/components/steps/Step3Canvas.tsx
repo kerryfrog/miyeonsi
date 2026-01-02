@@ -3,7 +3,7 @@
 import { RefObject } from 'react';
 
 interface Step3CanvasProps {
-  captureRef: RefObject<HTMLDivElement>;
+  captureRef: RefObject<HTMLDivElement | null>;
   theme: 'black' | 'pink';
   bgImage: string | null;
   targetImage: string | null;
@@ -11,8 +11,8 @@ interface Step3CanvasProps {
   step: number;
   text: string;
   setText: (text: string) => void;
-  targetInputRef: RefObject<HTMLInputElement>;
-  speakerInputRef: RefObject<HTMLInputElement>;
+  targetInputRef: RefObject<HTMLInputElement | null>;
+  speakerInputRef: RefObject<HTMLInputElement | null>;
 }
 
 export default function Step3Canvas({

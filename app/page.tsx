@@ -66,7 +66,6 @@ export default function MobilePrototype() {
               theme={theme}
               bgImage={bgImage}
               targetImage={targetImage}
-              setTargetImage={setTargetImage}
               speakerImage={speakerImage}
               step={step}
               text={text}
@@ -89,7 +88,6 @@ export default function MobilePrototype() {
               theme={theme}
               bgImage={bgImage}
               targetImage={targetImage}
-              setTargetImage={setTargetImage}
               speakerImage={speakerImage}
               step={step}
               text={text}

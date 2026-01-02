@@ -9,7 +9,7 @@ interface Step2BackgroundProps {
   setBgImage: (image: string | null) => void;
   selectedPreset: string | null;
   setSelectedPreset: (preset: string | null) => void;
-  bgInputRef: RefObject<HTMLInputElement>;
+  bgInputRef: RefObject<HTMLInputElement | null>;
 }
 
 export default function Step2Background({

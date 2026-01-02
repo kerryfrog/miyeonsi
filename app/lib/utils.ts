@@ -45,43 +45,51 @@ export const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, sette
 };
 
 interface SaveImageProps {
-  captureRef: React.RefObject<HTMLDivElement>;
+  captureRef: React.RefObject<HTMLDivElement | null>;
   theme: 'black' | 'pink';
   setPreviewUrl: (url: string | null) => void;
 }
 
 export const saveImage = async ({ captureRef, theme, setPreviewUrl }: SaveImageProps) => {
   if (!captureRef.current) return;
+
+  const loadOverlay = (src: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => resolve(img);
+      img.onerror = (err) => reject(err);
+    });
+  };
+
   try {
-    // Assuming document.fonts.ready is still needed for fonts to load correctly before capture
-    await document.fonts.ready;
     const canvas = await html2canvas(captureRef.current, {
-      backgroundColor: theme === 'black' ? '#000' : '#fff',
+      background: theme === 'black' ? '#000' : '#fff',
       useCORS: true,
       allowTaint: true,
       logging: false,
     });
 
-    const overlay = new Image();
-    overlay.src = '/black_mode_1.png';
-    overlay.onload = () => {
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        // 오버레이 이미지 크기 (원본보다 작게)
-        const overlayWidth = overlay.width / 2;
-        const overlayHeight = overlay.height / 2;
-        // 캔버스 우측 상단에 배치 (여백 20px)
-        ctx.drawImage(overlay, canvas.width - overlayWidth - 20, 20, overlayWidth, overlayHeight);
-      }
+    const overlay = await loadOverlay('/black_mode_1.png');
+    const ctx = canvas.getContext('2d');
+    
+    if (ctx) {
+      const overlayWidth = overlay.width / 2;
+      const overlayHeight = overlay.height / 2;
+      ctx.drawImage(overlay, canvas.width - overlayWidth - 20, 20, overlayWidth, overlayHeight);
+    }
 
-      const dataUrl = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.download = `miyeonsi-${Date.now()}.png`;
-      link.href = dataUrl;
-      link.click();
-      setPreviewUrl(dataUrl);
-    };
+    const dataUrl = canvas.toDataURL('image/png');
+    setPreviewUrl(dataUrl); // Set state for the preview modal
+
+    // Trigger download
+    const link = document.createElement('a');
+    link.download = `miyeonsi-${Date.now()}.png`;
+    link.href = dataUrl;
+    link.click();
+
   } catch (err) {
     console.error('이미지 생성 오류:', err);
+    alert('이미지 생성에 실패했습니다. (콘솔 확인)');
   }
 };
