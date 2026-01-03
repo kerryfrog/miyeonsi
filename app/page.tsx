@@ -9,7 +9,7 @@ import Step3Canvas from './components/steps/Step3Canvas';
 import Step5RemoveBg from './components/steps/Step5RemoveBg';
 import GuideFooter from './components/GuideFooter';
 import { BACKGROUND_PRESETS } from './lib/constants';
-import { handleUpload, saveImage } from './lib/utils'; // Import from utils
+import { handleUpload, saveImage, processRemoveBackground } from './lib/utils'; // Import from utils
 
 export default function MobilePrototype() {
   // State
@@ -21,6 +21,8 @@ export default function MobilePrototype() {
   const [speakerImage, setSpeakerImage] = useState<string | null>(null);
   const [text, setText] = useState('');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false); // New State
+  const [progress, setProgress] = useState(0); // New State
 
   // Refs
   const captureRef = useRef<HTMLDivElement>(null);
@@ -32,6 +34,27 @@ export default function MobilePrototype() {
   // New saveImage handler to pass correct props from page.tsx to utils.saveImage
   const handleSaveImage = () => saveImage({ captureRef, theme, setPreviewUrl });
 
+  const handleRemoveBg = async () => {
+    if (!targetImage || isProcessing) return;
+
+    setIsProcessing(true);
+    setProgress(0);
+    try {
+      const result = await processRemoveBackground(targetImage, setProgress);
+      setTargetImage(result);
+    } catch (error) {
+      console.error(error);
+      alert("배경 제거에 실패했습니다.");
+    } finally {
+      setIsProcessing(false);
+      setStep(6);
+    }
+  };
+
+  const handleSkipRemoveBg = () => {
+    setStep(6);
+  };
+
   return (
     <main className="min-h-screen flex justify-center bg-black font-chatwindow text-white select-none">
       <div className="w-full max-w-md flex flex-col relative overflow-hidden bg-black shadow-2xl">
@@ -39,10 +62,10 @@ export default function MobilePrototype() {
         <header className="flex-none flex flex-col items-center justify-center p-6 border-b border-white/10 bg-black z-10">
           <img src="/trash.png" alt="reset" onClick={() => window.location.reload()} className="w-6 h-6 cursor-pointer invert absolute left-4 top-8 opacity-60 hover:opacity-100 transition-opacity" />
           <div className="text-center">
-            <h1 className="text-xl font-bold tracking-widest text-white drop-shadow-md">
+            <h1 className="text-2xl font-bold tracking-widest text-white">
               {step === 1 ? "레트로 미연시 만들기" : "만드는 중.."}
             </h1>
-            {step === 1 && <p className="text-[10px] text-zinc-500 mt-1 uppercase tracking-widest">준비물: 배경, 캐릭터, 대사</p>}
+            {step === 1 && <p className="text-[15px] text-zinc-500 mt-1 uppercase tracking-widest">준비물: 배경, 캐릭터, 대사</p>}
           </div>
         </header>
 
@@ -79,6 +102,8 @@ export default function MobilePrototype() {
           {step === 5 && (
             <Step5RemoveBg
               targetImage={targetImage}
+              isProcessing={isProcessing}
+              progress={progress}
             />
           )}
 
@@ -102,13 +127,16 @@ export default function MobilePrototype() {
         <GuideFooter
           step={step}
           setStep={setStep}
-          theme={theme} // Added theme prop
+          theme={theme}
           bgImage={bgImage}
           speakerImage={speakerImage}
           targetImage={targetImage}
-          setTargetImage={setTargetImage} // Added
+          setTargetImage={setTargetImage}
           text={text}
-          onSave={handleSaveImage} // Changed from saveImage to onSave
+          onSave={handleSaveImage}
+          onRemoveBg={handleRemoveBg}
+          onSkipRemoveBg={handleSkipRemoveBg}
+          isProcessing={isProcessing}
         />
 
       </div>

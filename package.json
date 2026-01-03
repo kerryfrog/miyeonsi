@@ -11,7 +11,7 @@
   "dependencies": {
     "@imgly/background-removal": "^1.7.0",
     "@vercel/og": "^0.8.6",
-    "html2canvas": "^1.4.1",
+    "html2canvas-pro": "^1.6.3",
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3"

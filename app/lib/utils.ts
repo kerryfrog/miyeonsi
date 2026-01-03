@@ -1,4 +1,4 @@
-import html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas-pro';
 import { removeBackground } from '@imgly/background-removal';
 
 export const toBase64 = (file: File): Promise<string> =>
@@ -10,12 +10,14 @@ export const toBase64 = (file: File): Promise<string> =>
   });
 
 // ✅ 주인공 배경 제거(누끼) 함수 추가
-export const processRemoveBackground = async (imageSrc: string): Promise<string> => {
+export const processRemoveBackground = async (imageSrc: string, onProgress: (progress: number) => void): Promise<string> => {
   try {
     // 라이브러리 실행 (설정에 따라 public 경로 조정 가능)
     const blob = await removeBackground(imageSrc, {
       progress: (key, current, total) => {
-        console.log(`Downloading ${key}: ${Math.round((current / total) * 100)}%`);
+        const progressPercentage = Math.round((current / total) * 100);
+        console.log(`Downloading ${key}: ${progressPercentage}%`);
+        onProgress(progressPercentage);
       },
     });
     
@@ -64,7 +66,7 @@ export const saveImage = async ({ captureRef, theme, setPreviewUrl }: SaveImageP
 
   try {
     const canvas = await html2canvas(captureRef.current, {
-      background: theme === 'black' ? '#000' : '#fff',
+      background: '#000',
       useCORS: true,
       allowTaint: true,
       logging: false,
