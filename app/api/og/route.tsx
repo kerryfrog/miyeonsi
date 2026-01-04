@@ -47,7 +47,7 @@ export async function POST(request: Request) {
             />
           )}
 
-          {/* 하단 대화창 */}
+         {/* 하단 대화창 */}
           <div
             style={{
               position: 'absolute',
@@ -60,43 +60,47 @@ export async function POST(request: Request) {
               alignItems: 'center',
               padding: '0 20px',
               borderRadius: '20px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              border: '1px solid #fbbf24',
             }}
           >
-            {/* 스피커 아바타 */}
+            {/* ✅ 스피커 아바타: 위로 뚫고 나오게 (top: -40px) */}
             <div
               style={{
-                width: '70px',
-                height: '70px',
+                position: 'absolute',
+                top: '-40px',
+                left: '20px',
+                width: '100px',
+                height: '100px',
                 border: '2px solid #fbbf24',
                 backgroundColor: '#27272a',
                 borderRadius: '8px',
                 overflow: 'hidden',
                 display: 'flex',
-                marginRight: '20px',
+                zIndex: 100,
               }}
             >
               {speakerImage && <img src={speakerImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
             </div>
             
-            {/* 대사 텍스트: 흰색(white) 확인 */}
-                                                <div
-                                                  style={{
-                                                    color: 'white',
-                                                    fontSize: '18px',
-                                                    fontWeight: 400,
-                                                    lineHeight: '100%', // Equivalent to 1x font size
-                                                    letterSpacing: '0%', // No extra letter spacing
-                                                    flex: 1,
-                                                    marginLeft: '16px',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    textShadow: '0px 2px 4px rgba(0,0,0,0.5)',
-                                                    fontFamily: 'GulimCheCustom', // Ensure font family is applied here too
-                                                  }}
-                                                >
-                                                  {text}
-                                                </div>          </div>
+            {/* ✅ 텍스트 영역: 왼쪽 마진을 이미지 크기만큼 확보 (marginLeft: '120px') */}
+            <div
+              style={{
+                color: 'white',
+                fontSize: '20px',
+                fontWeight: 400,
+                marginLeft: '120px', // 이미지 자리 비워두기
+                fontFamily: 'GulimCheCustom',
+                lineHeight: '1.5',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+                maxHeight: '3em', // 2 lines * 1.5 line-height = 3em
+              }}
+            >
+              {text}
+            </div>
+          </div>  
         </div>
       ),
       {

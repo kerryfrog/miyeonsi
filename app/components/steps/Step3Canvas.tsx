@@ -27,6 +27,18 @@ export default function Step3Canvas({
   targetInputRef,
   speakerInputRef,
 }: Step3CanvasProps) {
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const inputValue = e.target.value;
+    const lines = inputValue.split('\n');
+
+    if (lines.length > 2) {
+      setText(lines.slice(0, 2).join('\n'));
+    } else {
+      setText(inputValue);
+    }
+  };
+
   return (
     <div className="flex-1 flex flex-col items-center justify-center bg-black">
       <div 
@@ -66,35 +78,39 @@ export default function Step3Canvas({
               </>
             )}
           </div>
-        )}
+        )} 
 
         {/* Display final elements from Step 6 onwards */}
         {targetImage && step >= 6 && (
           <img src={targetImage} className="absolute top-1/2 left-1/2 w-auto h-[85%] object-contain -translate-x-1/2 -translate-y-1/2 drop-shadow-2xl" />
         )}
 
-        {step >= 6 && (
-          <div className="absolute bottom-4 left-4 right-4 h-24 bg-[rgba(0,0,0,0.66)] rounded-xl border border-white/10 p-3 flex items-center shadow-2xl backdrop-blur-sm">
-            {/* 스피커 이미지 박스 */}
-            <div className="relative z-10 w-16 h-16 border-2 border-yellow-400 bg-zinc-800 overflow-hidden shrink-0 rounded-lg">
+       {step >= 6 && (
+          <div className="absolute bottom-4 left-4 right-4 h-24 bg-[rgba(0,0,0,0.66)] rounded-xl border flex p-3 shadow-2xl backdrop-blur-sm" style={{ borderColor: '#FFD563' }}>
+            
+            {/* ✅ 화자 이미지: 대화창 위로 튀어나오게 수정 */}
+            <div 
+              className="absolute -top-3 left-1 w-24 h-24 border-2 bg-zinc-800 overflow-hidden rounded-lg shadow-lg z-50" 
+              style={{ borderColor: '#FFD563' }}
+            >
               {speakerImage && <img src={speakerImage} className="w-full h-full object-cover" />}
             </div>
             
-            {/* 텍스트 영역: text-white 적용 */}
-            <div className="flex-1 ml-4 flex items-center">
+            {/* ✅ 텍스트 영역: 이미지가 나간 만큼 왼쪽 여백(ml-)을 충분히 확보 */}
+            <div className="flex-1 ml-24 flex items-start"> 
               {step === 6 ? (
                 <textarea
                   value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  className="w-full bg-transparent text-[18px] font-normal leading-none tracking-normal outline-none resize-none font-chatwindow p-1 placeholder:text-zinc-500"
+                  onChange={handleTextChange}
+                  className="w-full h-full bg-transparent text-[18px] font-normal leading-normal tracking-wider outline-none resize-none font-chatwindow p-1 placeholder:text-zinc-500 max-h-[54px] overflow-hidden line-clamp-2"
                   placeholder="대사를 입력하세요..."
                   autoFocus
                   style={{ color: 'white' }}
                 />
               ) : (
                 <div 
-                  className="text-[18px] font-normal leading-none tracking-normal font-chatwindow p-1 whitespace-pre-wrap drop-shadow-sm"
-                  style={{ color: 'white' }}
+                  className="h-full text-[18px] font-normal leading-normal tracking-wider font-chatwindow p-1 whitespace-pre-wrap drop-shadow-sm max-h-[54px] overflow-hidden line-clamp-2"
+                  style={{ color: 'white'   }}
                 >
                   {text || "..."}
                 </div>
