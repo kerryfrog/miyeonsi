@@ -102,6 +102,12 @@ export default function Step3Canvas({
             </div>
           </div>
         )}
+        {step >= 7 && (
+          <>
+            <img src="/black_mode_1.png" className="absolute top-0 right-0 z-40 w-1/2" />
+            <img src="/black_mode_2.png" className="absolute right-0 z-40 w-1/4 h-auto" style={{ top: `40px` }} />
+          </>
+        )}
       </div>
     </div>
   );

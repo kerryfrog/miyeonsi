@@ -59,32 +59,58 @@ export const saveImage = async ({ captureRef, theme, setPreviewUrl }: SaveImageP
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.src = src;
+      img.crossOrigin = "anonymous"; // CORS 이슈 방지
       img.onload = () => resolve(img);
       img.onerror = (err) => reject(err);
     });
   };
 
   try {
+    // 1. html2canvas로 현재 화면 캡처
     const canvas = await html2canvas(captureRef.current, {
-      background: '#000',
+      backgroundColor: '#000',
       useCORS: true,
       allowTaint: true,
+      scale: 2, // 고화질 저장을 위해 스케일 업
       logging: false,
     });
 
-    const overlay = await loadOverlay('/black_mode_1.png');
     const ctx = canvas.getContext('2d');
-    
-    if (ctx) {
-      const overlayWidth = overlay.width / 2;
-      const overlayHeight = overlay.height / 2;
-      ctx.drawImage(overlay, canvas.width - overlayWidth - 20, 20, overlayWidth, overlayHeight);
-    }
+    if (!ctx) return;
 
+    // 2. 테마에 맞는 UI 파일 목록 (핑크 테마용 파일이 없다면 블랙으로 대체)
+    const uiFiles = theme === 'black' 
+      ? ['/black_mode_1.png', '/black_mode_2.png']
+      : ['/black_mode_1.png', '/black_mode_2.png']; // 핑크용 UI가 생기면 여기를 수정하세요.
+
+    // 3. 모든 UI 요소를 비동기로 로드
+    const overlays = await Promise.all(uiFiles.map(src => loadOverlay(src)));
+
+    // 4. UI 요소를 우측 상단에 그리기
+    let currentY = 30; // 상단 여백
+    const rightMargin = 30; // 우측 여백
+
+    overlays.forEach((img) => {
+      // 원본 이미지의 절반 크기로 조정 (필요에 따라 조절 가능)
+      const displayWidth = img.width / 2;
+      const displayHeight = img.height / 2;
+
+      ctx.drawImage(
+        img, 
+        canvas.width - displayWidth - rightMargin, // 우측 정렬
+        currentY, 
+        displayWidth, 
+        displayHeight
+      );
+
+      // 다음 UI를 위해 Y축 간격 띄우기
+      currentY += displayHeight + 15; 
+    });
+
+    // 5. 결과 저장 및 프리뷰 설정
     const dataUrl = canvas.toDataURL('image/png');
-    setPreviewUrl(dataUrl); // Set state for the preview modal
+    setPreviewUrl(dataUrl);
 
-    // Trigger download
     const link = document.createElement('a');
     link.download = `miyeonsi-${Date.now()}.png`;
     link.href = dataUrl;
@@ -92,6 +118,6 @@ export const saveImage = async ({ captureRef, theme, setPreviewUrl }: SaveImageP
 
   } catch (err) {
     console.error('이미지 생성 오류:', err);
-    alert('이미지 생성에 실패했습니다. (콘솔 확인)');
+    alert('이미지 생성에 실패했습니다. 파일 경로(/public/...)를 확인해주세요.');
   }
 };

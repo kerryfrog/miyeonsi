@@ -1,8 +1,6 @@
 'use client';
 
-import { useState } from 'react';
 import NavButtons from './NavButtons';
-import { processRemoveBackground } from '../lib/utils';
 
 interface GuideFooterProps {
   step: number;
@@ -14,6 +12,9 @@ interface GuideFooterProps {
   setTargetImage: (url: string | null) => void;
   text: string;
   theme: 'black' | 'pink';
+  onRemoveBg: () => void;
+  onSkipRemoveBg: () => void;
+  isProcessing: boolean;
 }
 
 export default function GuideFooter({
@@ -25,9 +26,11 @@ export default function GuideFooter({
   targetImage,
   setTargetImage,
   text,
+  theme,
+  onRemoveBg,
+  onSkipRemoveBg,
+  isProcessing,
 }: GuideFooterProps) {
-  const [isProcessing, setIsProcessing] = useState(false);
-
   const getStepText = () => {
     switch (step) {
       case 1:
@@ -50,32 +53,10 @@ export default function GuideFooter({
       case 6:
         return "가장 중요한 대사를 입력해봐.";
       case 7:
-        return "완벽해! 이제 이미지를 저장해볼까?";
+        return "효과가 추가된 이미지를 저장할까요?";
       default:
         return "";
     }
-  };
-
-  const handleRemoveBg = async () => {
-    if (!targetImage || isProcessing) return;
-
-    setIsProcessing(true);
-    try {
-      const result = await processRemoveBackground(targetImage, (progress) => {
-        console.log(`Progress: ${progress}%`);
-      });
-      setTargetImage(result);
-    } catch (error) {
-      console.error(error);
-      alert("배경 제거에 실패했습니다.");
-    } finally {
-      setIsProcessing(false);
-      setStep(6);
-    }
-  };
-
-  const handleSkip = () => {
-    setStep(6);
   };
 
   return (
@@ -97,14 +78,14 @@ export default function GuideFooter({
         {step === 5 ? (
           <div className="flex gap-4 mt-4">
             <button
-              onClick={handleRemoveBg}
+              onClick={onRemoveBg}
               disabled={isProcessing}
               className="w-32 py-3 bg-yellow-400 text-black font-extrabold rounded-full shadow-lg hover:bg-yellow-300 active:scale-95 transition-transform disabled:opacity-50"
             >
               {isProcessing ? "처리 중..." : "네"}
             </button>
             <button
-              onClick={handleSkip}
+              onClick={onSkipRemoveBg}
               disabled={isProcessing}
               className="w-32 py-3 bg-zinc-200 text-zinc-800 font-extrabold rounded-full shadow-lg hover:bg-zinc-300 active:scale-95 transition-transform disabled:opacity-50"
             >
