@@ -23,6 +23,7 @@ export default function MobilePrototype() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false); // New State
   const [progress, setProgress] = useState(0); // New State
+  const [isCancelled, setIsCancelled] = useState(false); // Cancellation state
 
   // Refs
   const captureRef = useRef<HTMLDivElement>(null);
@@ -38,21 +39,32 @@ export default function MobilePrototype() {
     if (!targetImage || isProcessing) return;
 
     setIsProcessing(true);
+    setIsCancelled(false); // Reset cancellation state
     setProgress(0);
     try {
       const result = await processRemoveBackground(targetImage, setProgress);
-      setTargetImage(result);
+      if (!isCancelled) {
+        setTargetImage(result);
+      }
     } catch (error) {
-      console.error(error);
-      alert("배경 제거에 실패했습니다.");
+      if (!isCancelled) {
+        console.error(error);
+        alert("배경 제거에 실패했습니다.");
+      }
     } finally {
+      if (!isCancelled) {
+        setStep(6);
+      }
       setIsProcessing(false);
-      setStep(6);
     }
   };
 
   const handleSkipRemoveBg = () => {
     setStep(6);
+  };
+
+  const handleCancelRemoveBg = () => {
+    setIsCancelled(true);
   };
 
   return (
@@ -104,6 +116,8 @@ export default function MobilePrototype() {
               targetImage={targetImage}
               isProcessing={isProcessing}
               progress={progress}
+              onRemoveBg={handleRemoveBg}
+              onCancel={handleCancelRemoveBg}
             />
           )}
 

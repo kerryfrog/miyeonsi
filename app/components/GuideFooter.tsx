@@ -75,36 +75,22 @@ export default function GuideFooter({
           {getStepText()}
         </div>
 
-        {step === 5 ? (
-          <div className="flex gap-4 mt-4">
-            <button
-              onClick={onRemoveBg}
-              disabled={isProcessing}
-              className="w-32 py-3 bg-yellow-400 text-black font-extrabold rounded-full shadow-lg hover:bg-yellow-300 active:scale-95 transition-transform disabled:opacity-50"
-            >
-              {isProcessing ? "처리 중..." : "네"}
-            </button>
-            <button
-              onClick={onSkipRemoveBg}
-              disabled={isProcessing}
-              className="w-32 py-3 bg-zinc-200 text-zinc-800 font-extrabold rounded-full shadow-lg hover:bg-zinc-300 active:scale-95 transition-transform disabled:opacity-50"
-            >
-              아니요
-            </button>
-          </div>
-        ) : (
-          <NavButtons
-            step={step}
-            setStep={setStep}
-            onNext={step === 7 ? onSave : () => setStep(step + 1)}
-            nextDisabled={
-              (step === 2 && !bgImage) || 
-              (step === 3 && !speakerImage) || 
-              (step === 4 && !targetImage) || 
-              (step === 6 && !text)
-            } 
-          />
-        )}
+        <NavButtons
+          step={step}
+          setStep={setStep}
+          onNext={
+            step === 5 ? onSkipRemoveBg :
+            step === 7 ? onSave : 
+            () => setStep(step + 1)
+          }
+          nextDisabled={
+            (step === 2 && !bgImage) || 
+            (step === 3 && !speakerImage) || 
+            (step === 4 && !targetImage) || 
+            (step === 6 && !text) ||
+            (step === 5 && isProcessing) // Disable Next button on step 5 if processing
+          } 
+        />
       </div>
     </footer>
   );
