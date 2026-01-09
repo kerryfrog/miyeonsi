@@ -4,7 +4,6 @@ import "./globals.css";
 
 const songMyung = Song_Myung({
   weight: "400",
-  subsets: ["latin"],
   variable: "--font-song-myung",
 });
 
