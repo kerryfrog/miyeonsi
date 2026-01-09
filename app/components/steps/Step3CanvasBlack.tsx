@@ -15,7 +15,7 @@ interface Step3CanvasProps {
   speakerInputRef: RefObject<HTMLInputElement | null>;
 }
 
-export default function Step3Canvas({
+export default function Step3CanvasBlack({
   captureRef,
   theme,
   bgImage,

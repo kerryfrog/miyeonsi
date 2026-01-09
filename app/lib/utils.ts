@@ -12,12 +12,15 @@ export const toBase64 = (file: File): Promise<string> =>
 // ✅ 주인공 배경 제거(누끼) 함수 추가
 export const processRemoveBackground = async (imageSrc: string, onProgress: (progress: number) => void): Promise<string> => {
   try {
+    let lastProgress = -1;
     // 라이브러리 실행 (설정에 따라 public 경로 조정 가능)
     const blob = await removeBackground(imageSrc, {
       progress: (key, current, total) => {
         const progressPercentage = Math.round((current / total) * 100);
-        console.log(`Downloading ${key}: ${progressPercentage}%`);
-        onProgress(progressPercentage);
+        if (progressPercentage !== lastProgress) {
+          lastProgress = progressPercentage;
+          onProgress(progressPercentage);
+        }
       },
     });
     

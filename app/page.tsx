@@ -5,7 +5,8 @@ import { useState, useRef, ChangeEvent } from 'react';
 // Component Imports
 import Step1Theme from './components/steps/Step1Theme';
 import Step2Background from './components/steps/Step2Background';
-import Step3Canvas from './components/steps/Step3Canvas';
+import Step3CanvasBlack from './components/steps/Step3CanvasBlack';
+import Step3CanvasPink from './components/steps/Step3CanvasPink';
 import Step5RemoveBg from './components/steps/Step5RemoveBg';
 import GuideFooter from './components/GuideFooter';
 import { BACKGROUND_PRESETS } from './lib/constants';
@@ -24,6 +25,7 @@ export default function MobilePrototype() {
   const [isProcessing, setIsProcessing] = useState(false); // New State
   const [progress, setProgress] = useState(0); // New State
   const [isCancelled, setIsCancelled] = useState(false); // Cancellation state
+  const isCancelledRef = useRef(false); // Cancellation ref for async logic
 
   // Refs
   const captureRef = useRef<HTMLDivElement>(null);
@@ -40,22 +42,23 @@ export default function MobilePrototype() {
 
     setIsProcessing(true);
     setIsCancelled(false); // Reset cancellation state
+    isCancelledRef.current = false;
     setProgress(0);
     try {
       const result = await processRemoveBackground(targetImage, setProgress);
-      if (!isCancelled) {
+      if (!isCancelledRef.current) {
         setTargetImage(result);
+        setStep(6);
       }
     } catch (error) {
-      if (!isCancelled) {
+      if (!isCancelledRef.current) {
         console.error(error);
         alert("배경 제거에 실패했습니다.");
       }
     } finally {
-      if (!isCancelled) {
-        setStep(6);
+      if (!isCancelledRef.current) {
+        setIsProcessing(false);
       }
-      setIsProcessing(false);
     }
   };
 
@@ -65,7 +68,11 @@ export default function MobilePrototype() {
 
   const handleCancelRemoveBg = () => {
     setIsCancelled(true);
+    isCancelledRef.current = true;
+    setIsProcessing(false);
   };
+
+  const CanvasComponent = theme === 'black' ? Step3CanvasBlack : Step3CanvasPink;
 
   return (
     <main className="min-h-screen flex justify-center bg-black font-chatwindow text-white select-none">
@@ -96,7 +103,7 @@ export default function MobilePrototype() {
           )}
 
           {(step === 3 || step === 4) && (
-            <Step3Canvas
+            <CanvasComponent
               captureRef={captureRef}
               theme={theme}
               bgImage={bgImage}
@@ -122,7 +129,7 @@ export default function MobilePrototype() {
           )}
 
           {step >= 6 && (
-            <Step3Canvas
+            <CanvasComponent
               captureRef={captureRef}
               theme={theme}
               bgImage={bgImage}
