@@ -24,6 +24,7 @@ export default function MobilePrototype() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false); // New State
   const [progress, setProgress] = useState(0); // New State
+  const [progressText, setProgressText] = useState(''); // New State
   const [isCancelled, setIsCancelled] = useState(false); // Cancellation state
   const isCancelledRef = useRef(false); // Cancellation ref for async logic
 
@@ -44,8 +45,17 @@ export default function MobilePrototype() {
     setIsCancelled(false); // Reset cancellation state
     isCancelledRef.current = false;
     setProgress(0);
+    setProgressText('준비 중...');
     try {
-      const result = await processRemoveBackground(targetImage, setProgress);
+      const result = await processRemoveBackground(targetImage, (key, percentage) => {
+        if (key.includes('fetch')) {
+          setProgressText('모델 다운로드 중...');
+          setProgress(Math.round(percentage / 2));
+        } else {
+          setProgressText('배경 제거 중...');
+          setProgress(50 + Math.round(percentage / 2));
+        }
+      });
       if (!isCancelledRef.current) {
         setTargetImage(result);
         setStep(6);
@@ -123,6 +133,7 @@ export default function MobilePrototype() {
               targetImage={targetImage}
               isProcessing={isProcessing}
               progress={progress}
+              progressText={progressText}
               onRemoveBg={handleRemoveBg}
               onCancel={handleCancelRemoveBg}
             />

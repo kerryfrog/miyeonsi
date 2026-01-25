@@ -4,6 +4,7 @@ interface Step5RemoveBgProps {
   targetImage: string | null;
   isProcessing: boolean;
   progress: number;
+  progressText: string;
   onRemoveBg: () => void;
   onCancel: () => void;
 }
@@ -12,13 +13,14 @@ export default function Step5RemoveBg({
   targetImage,
   isProcessing,
   progress,
+  progressText,
   onRemoveBg,
   onCancel,
 }: Step5RemoveBgProps) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center bg-black p-4">
       <p className="text-xl font-bold mb-4">
-        {isProcessing ? "배경 제거 중..." : "주인공 이미지의 배경을 제거할까요?"}
+        {isProcessing ? progressText : "주인공 이미지의 배경을 제거할까요?"}
       </p>
       <div className="w-full max-w-xs aspect-square relative mb-8">
         {targetImage && (
