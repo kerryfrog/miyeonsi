@@ -102,17 +102,17 @@ export default function Step3CanvasPink({
                 <div 
                   className="h-20 border-2 border-black bg-[#FFDFF2] p-3 flex" 
                 >
-                  <div className="flex-1 flex items-center"> 
+                  <div className="flex-1 flex items-start"> 
                     {step === 6 ? (
                       <textarea
                         value={text}
                         onChange={handleTextChange}
-                        className="w-full bg-transparent text-[18px] text-black font-normal leading-tight tracking-wider outline-none resize-none font-songmyung placeholder:text-zinc-400 overflow-hidden"
+                        className="w-full bg-transparent text-[18px] text-black font-normal leading-tight tracking-wider outline-none resize-none font-chatwindow placeholder:text-zinc-400 overflow-hidden"
                         placeholder="대사를 입력하세요..."
                         autoFocus
                       />
                     ) : (
-                      <div className="text-[18px] text-black font-normal leading-tight tracking-wider font-songmyung whitespace-pre-wrap overflow-hidden line-clamp-2">
+                      <div className="text-[18px] text-black font-normal leading-tight tracking-wider font-chatwindow whitespace-pre-wrap overflow-hidden line-clamp-2">
                         {text || "..."}
                       </div>
                     )}

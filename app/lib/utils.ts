@@ -15,6 +15,7 @@ export const processRemoveBackground = async (imageSrc: string, onProgress: (key
     let lastProgress = -1;
     // 라이브러리 실행 (설정에 따라 public 경로 조정 가능)
     const blob = await removeBackground(imageSrc, {
+      publicPath: new URL('/models/', window.location.origin).toString(),
       progress: (key, current, total) => {
         const progressPercentage = Math.round((current / total) * 100);
         if (progressPercentage !== lastProgress) {

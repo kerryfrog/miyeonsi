@@ -5,12 +5,20 @@ interface NavButtonsProps {
   setStep: (step: number) => void;
   onNext: () => void;
   nextDisabled?: boolean;
+  setTargetImage?: (url: string | null) => void; // Add this prop
 }
 
-export default function NavButtons({ step, setStep, onNext, nextDisabled = false }: NavButtonsProps) {
+export default function NavButtons({ step, setStep, onNext, nextDisabled = false, setTargetImage }: NavButtonsProps) {
+  const handlePrevious = () => {
+    if (step === 4 && setTargetImage) {
+      setTargetImage(null);
+    }
+    setStep(step - 1);
+  };
+
   return (
     <div className="flex justify-between mt-4 text-sm font-bold">
-      {step > 1 && <button onClick={() => setStep(step - 1)} className="text-zinc-500 hover:text-white transition-colors">&lt; 이전</button>}
+      {step > 1 && <button onClick={handlePrevious} className="text-zinc-500 hover:text-white transition-colors">&lt; 이전</button>}
       <button 
         onClick={onNext} 
         disabled={nextDisabled} 

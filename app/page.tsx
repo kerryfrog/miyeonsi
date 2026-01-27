@@ -48,13 +48,8 @@ export default function MobilePrototype() {
     setProgressText('준비 중...');
     try {
       const result = await processRemoveBackground(targetImage, (key, percentage) => {
-        if (key.includes('fetch')) {
-          setProgressText('모델 다운로드 중...');
-          setProgress(Math.round(percentage / 2));
-        } else {
-          setProgressText('배경 제거 중...');
-          setProgress(50 + Math.round(percentage / 2));
-        }
+        setProgressText('배경 제거 중...');
+        setProgress(percentage);
       });
       if (!isCancelledRef.current) {
         setTargetImage(result);

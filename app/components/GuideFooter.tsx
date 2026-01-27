@@ -78,6 +78,7 @@ export default function GuideFooter({
         <NavButtons
           step={step}
           setStep={setStep}
+          setTargetImage={setTargetImage}
           onNext={
             step === 5 ? onSkipRemoveBg :
             step === 7 ? onSave : 
