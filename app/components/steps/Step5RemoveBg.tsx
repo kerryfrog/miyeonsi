@@ -22,6 +22,7 @@ export default function Step5RemoveBg({
       <p className="text-xl font-bold mb-4">
         {isProcessing ? progressText : "주인공 이미지의 배경을 제거할까요?"}
       </p>
+      <p className="text-sm text-gray-400 mb-4">배경 제거는 시간이 소모될 수 있습니다.</p>
       <div className="w-full max-w-xs aspect-square relative mb-8">
         {targetImage && (
           <img src={targetImage} alt="Target" className="object-contain w-full h-full" />

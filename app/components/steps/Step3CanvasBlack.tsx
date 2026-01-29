@@ -86,7 +86,7 @@ export default function Step3CanvasBlack({
         )}
 
        {step >= 6 && (
-          <div className="absolute bottom-4 left-4 right-4 h-24 bg-[rgba(0,0,0,0.66)] rounded-xl border flex p-3 shadow-2xl backdrop-blur-sm" style={{ borderColor: '#FFD563' }}>
+          <div className="absolute bottom-4 left-4 right-4 h-24 bg-[rgba(0,0,0,0.66)] rounded-xl border flex pt-0 px-3 shadow-2xl backdrop-blur-sm" style={{ borderColor: '#FFD563' }}>
             
             {/* ✅ 화자 이미지: 대화창 위로 튀어나오게 수정 */}
             <div 
@@ -102,26 +102,25 @@ export default function Step3CanvasBlack({
                 <textarea
                   value={text}
                   onChange={handleTextChange}
-                  className="w-full h-full bg-transparent text-[18px] font-normal leading-normal tracking-wider outline-none resize-none font-chatwindow p-1 placeholder:text-zinc-500 max-h-[54px] overflow-hidden line-clamp-2"
+                  className="w-full h-full bg-transparent text-[18px] font-normal leading-normal tracking-wider outline-none resize-none font-chatwindow pt-0.5 pl-0.5 placeholder:text-zinc-500 max-h-[54px] overflow-hidden line-clamp-2"
                   placeholder="대사를 입력하세요..."
                   autoFocus
                   style={{ color: 'white' }}
                 />
               ) : (
-                <div 
-                  className="h-full text-[18px] font-normal leading-normal tracking-wider font-chatwindow p-1 whitespace-pre-wrap drop-shadow-sm max-h-[54px] overflow-hidden line-clamp-2"
-                  style={{ color: 'white'   }}
-                >
-                  {text || "..."}
-                </div>
-              )}
+                                                <div
+                                                                    className="h-full text-[18px] font-normal leading-normal tracking-wider font-chatwindow pt-0.5 pl-0.5 whitespace-pre-wrap drop-shadow-sm max-h-[54px] overflow-hidden line-clamp-2"
+                                                                    style={{ color: 'white'   }}
+                                                                  >
+                                                                    {text || "..."}
+                                                                  </div>              )}
             </div>
           </div>
         )}
         {step >= 7 && (
           <>
-            <img src="/black_mode_1.png" className="absolute top-0 right-0 z-40 w-1/2" />
-            <img src="/black_mode_2.png" className="absolute right-0 z-40 w-1/4 h-auto" style={{ top: `40px` }} />
+            <img src="/black_mode_1.png" className="absolute mt-4 right-0 z-40 w-1/2" />
+            <img src="/black_mode_2.png" className="absolute right-0 z-40 w-1/4 h-auto" style={{ top: `56px` }} />
           </>
         )}
       </div>
