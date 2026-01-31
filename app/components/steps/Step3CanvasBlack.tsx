@@ -119,8 +119,8 @@ export default function Step3CanvasBlack({
         )}
         {step >= 7 && (
           <>
-            <img src="/black_mode_1.png" className="absolute mt-4 right-0 z-40 w-1/2" />
-            <img src="/black_mode_2.png" className="absolute right-0 z-40 w-1/4 h-auto" style={{ top: `56px` }} />
+            <img src="/black_mode_1.png" className="absolute mt-4 right-4 z-40 w-1/2" />
+            <img src="/black_mode_2.png" className="absolute right-4 z-40 w-1/4 h-auto" style={{ top: `56px` }} />
           </>
         )}
       </div>
