@@ -10,6 +10,9 @@ const songMyung = Song_Myung({
 export const metadata: Metadata = {
   title: "레트로 미연시 만들기",
   description: "두근두근 레트로 미연시 만들기",
+  openGraph: {
+    images: ["/meta_image.png"],
+  },
 };
 
 export default function RootLayout({
