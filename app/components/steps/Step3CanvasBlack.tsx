@@ -41,13 +41,10 @@ export default function Step3CanvasBlack({
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center bg-black">
-      <div 
-        ref={captureRef} 
-        className={`relative w-full aspect-[4/3] bg-black overflow-hidden shadow-2xl border-y-4 ${
-          theme === 'black' ? 'border-zinc-800' : 'border-pink-300'
-        }`}
-      >
-        {bgImage && <img src={bgImage} className="absolute inset-0 w-full h-full object-cover" />}
+            <div
+              ref={captureRef}
+              className="relative w-full aspect-[4/3] bg-black overflow-hidden shadow-2xl"
+            >        {bgImage && <img src={bgImage} className="absolute inset-0 w-full h-full object-cover" />}
         
         {/* Speaker image selection UI for step 3 */}
         {step === 3 && (
