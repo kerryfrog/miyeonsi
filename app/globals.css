@@ -44,3 +44,13 @@ body {
   font-family: 'GulimCheCustom', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
+
+/* Collapse empty AdSense containers so in-app browsers don't leave dead space. */
+ins.adsbygoogle[data-ad-status="unfilled"] {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+.google-auto-placed:has(ins.adsbygoogle[data-ad-status="unfilled"]) {
+  display: none !important;
+}
