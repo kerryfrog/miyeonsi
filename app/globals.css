@@ -54,3 +54,21 @@ ins.adsbygoogle[data-ad-status="unfilled"] {
 .google-auto-placed:has(ins.adsbygoogle[data-ad-status="unfilled"]) {
   display: none !important;
 }
+
+/* Collapse auto-placed/anchor ads after user closes (some devices keep a blank slot). */
+ins.adsbygoogle[data-anchor-status="closed"],
+ins.adsbygoogle[style*="height: 0px"],
+ins.adsbygoogle[style*="height:0px"] {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+.google-auto-placed:has(ins.adsbygoogle[data-anchor-status="closed"]),
+.google-auto-placed:has(ins.adsbygoogle[style*="height: 0px"]),
+.google-auto-placed:has(ins.adsbygoogle[style*="height:0px"]) {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
