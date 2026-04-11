@@ -83,8 +83,16 @@ export default function MobilePrototype() {
     <main className="min-h-screen flex justify-center bg-black font-chatwindow text-white select-none">
       <div className="w-full max-w-md flex flex-col relative overflow-hidden bg-black shadow-2xl">
         
-        <header className="flex-none flex flex-col items-center justify-center p-6 border-b border-white/10 bg-black z-10">
-          <img src="/trash.png" alt="reset" onClick={() => window.location.reload()} className="w-6 h-6 cursor-pointer invert absolute left-4 top-8 opacity-60 hover:opacity-100 transition-opacity" />
+        <header className="flex-none flex flex-col items-center justify-center p-6 border-b border-white/10 bg-black z-10 relative">
+          <img src="/ssseregi_logo.svg" alt="reset" onClick={() => window.location.reload()} className="w-6 h-6 cursor-pointer absolute left-4 top-8 opacity-90 hover:opacity-100 transition-opacity" />
+          <a
+            href="https://litt.ly/ssseregi"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute right-4 top-8 text-sm font-semibold underline decoration-2 underline-offset-2 text-white opacity-80 hover:opacity-100 transition-opacity"
+          >
+            @ssseregi
+          </a>
           <div className="text-center">
             <h1 className="text-2xl font-bold tracking-widest text-white">
               {step === 1 ? "레트로 미연시 만들기" : "만드는 중.."}
